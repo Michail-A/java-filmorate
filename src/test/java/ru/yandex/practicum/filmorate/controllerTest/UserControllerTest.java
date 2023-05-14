@@ -47,7 +47,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void uncorrectedBirthday(){
+    void uncorrectedBirthday() {
         user = new User("test@mail.ru", "test", LocalDate.of(2100, 04, 28));
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             userController.addUser(user);

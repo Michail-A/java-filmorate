@@ -18,7 +18,6 @@ public class FilmControllerTest {
     Film film;
 
 
-
     @BeforeEach
     void beforeEach() {
         filmController = new FilmController();
@@ -35,8 +34,8 @@ public class FilmControllerTest {
     }
 
     @Test
-    void longDescription(){
-        film = new Film("Test", "Test".repeat(1000)+
+    void longDescription() {
+        film = new Film("Test", "Test".repeat(1000) +
                 "", LocalDate.of(2020, 02, 01), 90);
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             filmController.addFilm(film);
@@ -46,7 +45,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void uncorrectedDate(){
+    void uncorrectedDate() {
         film = new Film("Test", "Test", LocalDate.of(1895, 12, 27), 90);
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             filmController.addFilm(film);
@@ -56,7 +55,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    void negativeDuration(){
+    void negativeDuration() {
         film = new Film("Test", "Test", LocalDate.of(2020, 02, 01), -90);
         ValidationException exception = assertThrows(ValidationException.class, () -> {
             filmController.addFilm(film);
