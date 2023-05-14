@@ -26,7 +26,7 @@ public class UserController {
     @PostMapping("/users")
     public User addUser(@RequestBody User user) throws ValidationException {
         log.info("Запрос на добавление пользователя");
-        if(user.getName() == null){
+        if (user.getName() == null) {
             log.info("Поле 'name' заполнено из логина");
             user.setName(user.getLogin());
         }
@@ -49,15 +49,15 @@ public class UserController {
     }
 
     private void validate(User user) throws ValidationException {
-        if(user.getEmail().isEmpty() || !user.getEmail().contains("@")){
+        if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             log.error("Не верный эмэйл");
             throw new ValidationException("Некорректный email");
         }
-        if(user.getLogin().isEmpty() || user.getLogin().isBlank()){
+        if (user.getLogin().isEmpty() || user.getLogin().isBlank()) {
             log.error("Пустой логин");
             throw new ValidationException("Некорректный логин");
         }
-        if(user.getBirthday().isAfter(LocalDate.now())){
+        if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("Не верная дата рождения");
             throw new ValidationException("Некорректная дата рождения");
         }
