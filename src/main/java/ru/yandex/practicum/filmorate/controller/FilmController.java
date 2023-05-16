@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.practicum.filmorate.controller.Exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.controller.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +17,8 @@ public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private Map<Integer, Film> films = new HashMap<>();
     private int filmId = 1;
+
+    private LocalDate MIN_DATA = LocalDate.of(1895, 12, 28);
 
     @GetMapping("/films")
     public List<Film> getFilms() {
@@ -46,15 +48,15 @@ public class FilmController {
     }
 
     private void validate(Film film) throws ValidationException {
-        if (film.getName().isBlank()) {
+        if (film.getName().isBlank() || film.getName() == null) {
             log.error("Пустое название фильма");
             throw new ValidationException("Название не может быть пустым");
         }
-        if (film.getDescription().length() > 200) {
+        if (film.getDescription().length() > 200 || film.getDescription().isBlank() || film.getDescription() == null) {
             log.error("Описание больше 200 символов");
             throw new ValidationException("Описание больше 200 символов!");
         }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (film.getReleaseDate().isBefore(MIN_DATA) || film.getReleaseDate() == null) {
             log.error("Не корректная дата:" + film.getReleaseDate());
             throw new ValidationException("Дата не может быть раньше 28.12.1895");
         }

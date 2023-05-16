@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.practicum.filmorate.controller.Exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.controller.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,8 @@ public class UserController {
     @PostMapping("/users")
     public User addUser(@RequestBody User user) throws ValidationException {
         log.info("Запрос на добавление пользователя");
-        if (user.getName() == null) {
+        if (user.getName().isBlank()) ;
+        {
             log.info("Поле 'name' заполнено из логина");
             user.setName(user.getLogin());
         }
@@ -49,15 +50,15 @@ public class UserController {
     }
 
     private void validate(User user) throws ValidationException {
-        if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
+        if (user.getEmail().isBlank() || !user.getEmail().contains("@") || user.getEmail() == null) {
             log.error("Не верный эмэйл");
             throw new ValidationException("Некорректный email");
         }
-        if (user.getLogin().isEmpty() || user.getLogin().isBlank()) {
+        if (user.getLogin().isBlank() || user.getLogin().contains(" ") || user.getLogin() == null) {
             log.error("Пустой логин");
             throw new ValidationException("Некорректный логин");
         }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
+        if (user.getBirthday().isAfter(LocalDate.now()) || user.getBirthday() == null) {
             log.error("Не верная дата рождения");
             throw new ValidationException("Некорректная дата рождения");
         }
