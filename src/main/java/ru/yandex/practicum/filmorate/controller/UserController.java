@@ -49,15 +49,15 @@ public class UserController {
     }
 
     private void validate(User user) throws ValidationException {
-        if (user.getEmail().isBlank() || !user.getEmail().contains("@") || user.getEmail() == null) {
+        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.error("Не верный эмэйл");
             throw new ValidationException("Некорректный email");
         }
-        if (user.getLogin().isBlank() || user.getLogin().contains(" ") || user.getLogin() == null) {
+        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             log.error("Пустой логин");
             throw new ValidationException("Некорректный логин");
         }
-        if (user.getBirthday().isAfter(LocalDate.now()) || user.getBirthday() == null) {
+        if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
             log.error("Не верная дата рождения");
             throw new ValidationException("Некорректная дата рождения");
         }

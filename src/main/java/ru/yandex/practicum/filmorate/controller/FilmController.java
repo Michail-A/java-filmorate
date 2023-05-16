@@ -48,15 +48,15 @@ public class FilmController {
     }
 
     private void validate(Film film) throws ValidationException {
-        if (film.getName().isBlank() || film.getName() == null) {
+        if (film.getName() == null || film.getName().isBlank()) {
             log.error("Пустое название фильма");
             throw new ValidationException("Название не может быть пустым");
         }
-        if (film.getDescription().length() > 200 || film.getDescription().isBlank() || film.getDescription() == null) {
+        if (film.getDescription() == null || film.getDescription().length() > 200 || film.getDescription().isBlank()) {
             log.error("Описание больше 200 символов");
             throw new ValidationException("Описание больше 200 символов!");
         }
-        if (film.getReleaseDate().isBefore(minDate) || film.getReleaseDate() == null) {
+        if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(minDate)) {
             log.error("Не корректная дата:" + film.getReleaseDate());
             throw new ValidationException("Дата не может быть раньше 28.12.1895");
         }
