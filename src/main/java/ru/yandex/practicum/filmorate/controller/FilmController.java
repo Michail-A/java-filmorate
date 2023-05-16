@@ -18,7 +18,7 @@ public class FilmController {
     private Map<Integer, Film> films = new HashMap<>();
     private int filmId = 1;
 
-    private LocalDate MIN_DATA = LocalDate.of(1895, 12, 28);
+    private LocalDate minDate = LocalDate.of(1895, 12, 28);
 
     @GetMapping("/films")
     public List<Film> getFilms() {
@@ -56,7 +56,7 @@ public class FilmController {
             log.error("Описание больше 200 символов");
             throw new ValidationException("Описание больше 200 символов!");
         }
-        if (film.getReleaseDate().isBefore(MIN_DATA) || film.getReleaseDate() == null) {
+        if (film.getReleaseDate().isBefore(minDate) || film.getReleaseDate() == null) {
             log.error("Не корректная дата:" + film.getReleaseDate());
             throw new ValidationException("Дата не может быть раньше 28.12.1895");
         }
