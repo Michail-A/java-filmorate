@@ -26,7 +26,7 @@ public class UserController {
     @PostMapping("/users")
     public User addUser(@RequestBody User user) throws ValidationException {
         log.info("Запрос на добавление пользователя");
-        if (user.getName().isBlank()) ;
+        if (user.getName() == null ) ;
         {
             log.info("Поле 'name' заполнено из логина");
             user.setName(user.getLogin());
