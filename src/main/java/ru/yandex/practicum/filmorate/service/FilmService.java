@@ -41,6 +41,9 @@ public class FilmService {
         };
         films.sort(likeComparator);
         Collections.reverse(films);
+        if(films.size()<count){
+            count= films.size();
+        }
         List<Film> popularFilms = films.subList(0, count);
         return popularFilms;
     }
