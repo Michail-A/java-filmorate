@@ -26,6 +26,9 @@ public class FilmService {
 
     public String deleteLike(int filmId, int userId) {
         Film film = filmStorage.getFilmForId(filmId);
+        if (!film.getLikes().contains(userId)) {
+            throw new RuntimeException();
+        }
         film.deleteLike(userId);
         filmStorage.updateFilm(film);
         return "Пользователь " + userId + " удалил лайк фильму " + filmId;
@@ -41,8 +44,8 @@ public class FilmService {
         };
         films.sort(likeComparator);
         Collections.reverse(films);
-        if(films.size()<count){
-            count= films.size();
+        if (films.size() < count) {
+            count = films.size();
         }
         List<Film> popularFilms = films.subList(0, count);
         return popularFilms;

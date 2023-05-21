@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
@@ -16,12 +18,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UserControllerTest {
     UserController userController;
     User user;
+    UserService userService;
+    InMemoryUserStorage userStorage;
 
- /*   @BeforeEach
+    @BeforeEach
     void beforeEach() {
-        userController = new UserController();
+        userStorage = new InMemoryUserStorage();
+        userService = new UserService(userStorage);
+        userController = new UserController(userStorage, userService);
     }
-*/
+
     @Test
     void uncorrectedEmail() {
         user = new User("mail.ru", "test", LocalDate.of(1999, 04, 28));

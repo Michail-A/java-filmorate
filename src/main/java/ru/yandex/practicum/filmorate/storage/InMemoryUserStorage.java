@@ -40,13 +40,14 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUserForId(int id) {
-        if(!users.containsKey(id)){
+        if (!users.containsKey(id)) {
             throw new RuntimeException();
         }
         return users.get(id);
     }
+
     @Override
-    public Set<Integer> getIdUsers(){
+    public Set<Integer> getIdUsers() {
         return users.keySet();
     }
 

@@ -19,8 +19,8 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public String addFriend(int userId, int friendsId){
-        if(!userStorage.getIdUsers().contains(userId) || !userStorage.getIdUsers().contains(friendsId)){
+    public String addFriend(int userId, int friendsId) {
+        if (!userStorage.getIdUsers().contains(userId) || !userStorage.getIdUsers().contains(friendsId)) {
             throw new RuntimeException();
         }
         User user = userStorage.getUserForId(userId);
@@ -32,28 +32,28 @@ public class UserService {
         return userId + " добавил в друзья " + friendsId;
     }
 
-    public String deleteFriend(int userId, int friendsId){
+    public String deleteFriend(int userId, int friendsId) {
         User user = userStorage.getUserForId(userId);
         user.deleteFriend(friendsId);
         userStorage.updateUser(user);
         user = userStorage.getUserForId(friendsId);
         user.deleteFriend(userId);
         userStorage.updateUser(user);
-        return userId + " удалил из друзей " +friendsId;
+        return userId + " удалил из друзей " + friendsId;
     }
 
-    public List<User> getCommonFriends(int userId, int friendsId){
+    public List<User> getCommonFriends(int userId, int friendsId) {
         List<User> commonFriends = new ArrayList<>();
         Set<Integer> userFriends = userStorage.getUserForId(userId).getFriends();
         for (Integer id : userFriends) {
-            if(userStorage.getUserForId(friendsId).getFriends().contains(id)){
+            if (userStorage.getUserForId(friendsId).getFriends().contains(id)) {
                 commonFriends.add(userStorage.getUserForId(id));
             }
         }
         return commonFriends;
     }
 
-    public List<User> getFriends(int id){
+    public List<User> getFriends(int id) {
         List<User> friends = new ArrayList<>();
         for (Integer friendId : userStorage.getUserForId(id).friends) {
             friends.add(userStorage.getUserForId(friendId));
