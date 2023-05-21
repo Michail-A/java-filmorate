@@ -42,12 +42,12 @@ public class UserService {
         return userId + " удалил из друзей " +friendsId;
     }
 
-    public List<Integer> getCommonFriends(int userId, int friendsId){
-        List<Integer> commonFriends = new ArrayList<>();
+    public List<User> getCommonFriends(int userId, int friendsId){
+        List<User> commonFriends = new ArrayList<>();
         Set<Integer> userFriends = userStorage.getUserForId(userId).getFriends();
         for (Integer id : userFriends) {
             if(userStorage.getUserForId(friendsId).getFriends().contains(id)){
-                commonFriends.add(id);
+                commonFriends.add(userStorage.getUserForId(id));
             }
         }
         return commonFriends;
