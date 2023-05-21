@@ -56,9 +56,9 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/friends")
-    public Set<Integer> getFriends(@PathVariable int id){
+    public List<User> getFriends(@PathVariable int id){
         log.info("Запрос на получение списка друзей пользователя");
-        return userStorage.getUserForId(id).getFriends();
+        return userService.getFriends(id);
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")

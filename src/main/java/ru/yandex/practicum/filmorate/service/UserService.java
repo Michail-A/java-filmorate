@@ -52,4 +52,12 @@ public class UserService {
         }
         return commonFriends;
     }
+
+    public List<User> getFriends(int id){
+        List<User> friends = new ArrayList<>();
+        for (Integer friendId : userStorage.getUserForId(id).friends) {
+            friends.add(userStorage.getUserForId(friendId));
+        }
+        return friends;
+    }
 }
