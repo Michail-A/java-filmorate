@@ -17,12 +17,12 @@ public class FilmControllerTest {
     FilmController filmController;
     Film film;
 
-
+/*
     @BeforeEach
     void beforeEach() {
         filmController = new FilmController();
     }
-
+*/
     @Test
     void emptyName() {
         film = new Film("", "Test", LocalDate.of(2020, 02, 01), 90);

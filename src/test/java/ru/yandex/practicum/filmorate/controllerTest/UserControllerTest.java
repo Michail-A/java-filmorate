@@ -17,11 +17,11 @@ public class UserControllerTest {
     UserController userController;
     User user;
 
-    @BeforeEach
+ /*   @BeforeEach
     void beforeEach() {
         userController = new UserController();
     }
-
+*/
     @Test
     void uncorrectedEmail() {
         user = new User("mail.ru", "test", LocalDate.of(1999, 04, 28));
