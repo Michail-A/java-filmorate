@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -17,6 +16,7 @@ import java.util.Set;
 public class UserService {
     private final UserStorage userStorage;
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     public UserService(InMemoryUserStorage userStorage) {
         this.userStorage = userStorage;
