@@ -12,7 +12,8 @@ import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.List;
 
-@RestController("/films")
+@RestController
+@RequestMapping(path = "/films")
 public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final FilmStorage filmStorage;
@@ -24,45 +25,45 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    @GetMapping("/films")
+    @GetMapping
     public List<Film> getFilms() {
         log.info("Получен запрос на получение списка фильмов");
         return filmStorage.getFilms();
     }
 
-    @PostMapping("/films")
-    public Film addFilm(@RequestBody Film film) throws ValidationException {
+    @PostMapping
+    public Film addFilm(@RequestBody Film film) {
         log.info("Получен запрос на добавление фильма");
         filmStorage.addFilm(film);
         return film;
     }
 
-    @PutMapping("/films")
-    public Film updateFilm(@RequestBody Film film) throws ValidationException {
+    @PutMapping
+    public Film updateFilm(@RequestBody Film film) {
         log.info("Получен запрос на обновление фильма");
         filmStorage.updateFilm(film);
         return film;
     }
 
-    @PutMapping("/films/{id}/like/{userId}")
+    @PutMapping("/{id}/like/{userId}")
     public String addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен запрос на лайк");
         return filmService.addLike(id, userId);
     }
 
-    @DeleteMapping("/films/{id}/like/{userId}")
+    @DeleteMapping("/{id}/like/{userId}")
     public String deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен запрос на дизлайк");
         return filmService.deleteLike(id, userId);
     }
 
-    @GetMapping("/films/popular")
+    @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         log.info("Запрос на получение списка популярных фильмов");
         return filmService.getPopularFilm(count);
     }
 
-    @GetMapping("/films/{id}")
+    @GetMapping("/{id}")
     public Film getFilmForId(@PathVariable int id) {
         return filmStorage.getFilmForId(id);
     }

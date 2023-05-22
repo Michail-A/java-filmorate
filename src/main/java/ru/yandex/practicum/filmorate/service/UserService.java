@@ -1,7 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -13,13 +16,13 @@ import java.util.Set;
 @Service
 public class UserService {
     private final UserStorage userStorage;
-
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     @Autowired
     public UserService(InMemoryUserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public String addFriend(int userId, int friendsId) {
+    public void addFriend(int userId, int friendsId) {
         if (!userStorage.getIdUsers().contains(userId) || !userStorage.getIdUsers().contains(friendsId)) {
             throw new RuntimeException();
         }
@@ -29,24 +32,25 @@ public class UserService {
         user = userStorage.getUserForId(friendsId);
         user.addFriend(userId);
         userStorage.updateUser(user);
-        return userId + " добавил в друзья " + friendsId;
+        log.info(userId + " добавил в друзья " + friendsId);
     }
 
-    public String deleteFriend(int userId, int friendsId) {
+    public void deleteFriend(int userId, int friendsId) {
         User user = userStorage.getUserForId(userId);
         user.deleteFriend(friendsId);
         userStorage.updateUser(user);
         user = userStorage.getUserForId(friendsId);
         user.deleteFriend(userId);
         userStorage.updateUser(user);
-        return userId + " удалил из друзей " + friendsId;
+        log.info(userId + " удалил из друзей " + friendsId);
     }
 
     public List<User> getCommonFriends(int userId, int friendsId) {
         List<User> commonFriends = new ArrayList<>();
         Set<Integer> userFriends = userStorage.getUserForId(userId).getFriends();
         for (Integer id : userFriends) {
-            if (userStorage.getUserForId(friendsId).getFriends().contains(id)) {
+            Set<Integer> friends = userStorage.getUserForId(friendsId).getFriends();
+            if (friends.contains(id)) {
                 commonFriends.add(userStorage.getUserForId(id));
             }
         }

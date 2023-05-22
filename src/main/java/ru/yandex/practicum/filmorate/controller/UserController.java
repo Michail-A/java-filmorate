@@ -12,7 +12,8 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
-@RestController("/users")
+@RestController
+@RequestMapping(path = "/users")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserStorage userStorage;
@@ -24,49 +25,50 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public List<User> getUsers() {
         log.info("Запрос на получение пользователей");
         return userStorage.getUsers();
     }
 
-    @PostMapping("/users")
-    public User addUser(@RequestBody User user) throws ValidationException {
+    @PostMapping
+    public User addUser(@RequestBody User user) {
         log.info("Запрос на добавление пользователя");
         return userStorage.addUser(user);
     }
 
-    @PutMapping("/users")
-    public User updateUser(@RequestBody User user) throws ValidationException {
+    @PutMapping
+    public User updateUser(@RequestBody User user) {
         log.info("Запрос на обновление пользователя");
         return userStorage.updateUser(user);
     }
 
-    @PutMapping("/users/{id}/friends/{friendId}")
-    public String addFriend(@PathVariable int id, @PathVariable int friendId) {
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("Запрос на добавление в друзья");
-        return userService.addFriend(id, friendId);
+        userService.addFriend(id, friendId);
+        return userStorage.getUserForId(id);
     }
 
-    @DeleteMapping("/users/{id}/friends/{friendId}")
-    public String deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("Запрос на удаление друзей");
-        return userService.deleteFriend(id, friendId);
+        userService.deleteFriend(id, friendId);
     }
 
-    @GetMapping("/users/{id}/friends")
+    @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable int id) {
         log.info("Запрос на получение списка друзей пользователя");
         return userService.getFriends(id);
     }
 
-    @GetMapping("/users/{id}/friends/common/{otherId}")
+    @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
         log.info("Запрос на получение списка общих друзей");
         return userService.getCommonFriends(id, otherId);
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public User getUserForId(@PathVariable int id) {
         return userStorage.getUserForId(id);
     }
