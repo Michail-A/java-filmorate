@@ -13,18 +13,24 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationException(final ValidationException e) {
-        return Map.of("error", "ошибка валидации");
+        return Map.of(
+                "error", "ошибка валидации:",
+                "errorMessage", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleRuntimeException(final RuntimeException e) {
-        return Map.of("error", "объект не найден");
+    public Map<String, String> handleRuntimeException(final ObjectNotFoundException e) {
+        return Map.of(
+                "error", "объект не найден",
+                "errorMessage", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleException(final Exception e) {
-        return Map.of("error", "объект не найден");
+    public Map<String, String> handleException(final RuntimeException e) {
+        return Map.of(
+                "error", "объект не найден",
+                "errorMessage", e.getMessage());
     }
 }
