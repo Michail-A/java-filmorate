@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.util.*;
 
-@Component
+@Component("InMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
     private HashMap<Integer, User> users = new HashMap<>();
     private int userId = 1;
@@ -46,11 +46,6 @@ public class InMemoryUserStorage implements UserStorage {
             throw new ObjectNotFoundException("Пользователь id=" + id + " не найден");
         }
         return users.get(id);
-    }
-
-    @Override
-    public Set<Integer> getIdUsers() {
-        return users.keySet();
     }
 
     private void validate(User user) throws ValidationException {

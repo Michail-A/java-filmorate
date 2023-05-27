@@ -14,5 +14,4 @@ public interface UserStorage {
 
     User getUserForId(int id);
 
-    Set<Integer> getIdUsers();
 }

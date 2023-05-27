@@ -3,9 +3,9 @@ package ru.yandex.practicum.filmorate.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
@@ -14,13 +14,13 @@ import java.util.List;
 @RequestMapping(path = "/users")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private final UserStorage userStorage;
-    private final UserService userService;
-
     @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
+    private final UserStorage userStorage;
+    //private final UserService userService;
+
+    public UserController(UserStorage userStorage) {
         this.userStorage = userStorage;
-        this.userService = userService;
+        //this.userService = userService;
     }
 
     @GetMapping
@@ -41,7 +41,7 @@ public class UserController {
         return userStorage.updateUser(user);
     }
 
-    @PutMapping("/{id}/friends/{friendId}")
+  /*  @PutMapping("/{id}/friends/{friendId}")
     public User addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("Запрос на добавление в друзья");
         userService.addFriend(id, friendId);
@@ -65,7 +65,7 @@ public class UserController {
         log.info("Запрос на получение списка общих друзей");
         return userService.getCommonFriends(id, otherId);
     }
-
+*/
     @GetMapping("/{id}")
     public User getUserForId(@PathVariable int id) {
         return userStorage.getUserForId(id);
