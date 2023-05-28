@@ -43,16 +43,16 @@ public class FilmController {
         return film;
     }
 
-   /* @PutMapping("/{id}/like/{userId}")
+    @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен запрос на лайк");
-        filmService.addLike(id, userId);
+        filmStorage.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен запрос на дизлайк");
-        filmService.deleteLike(id, userId);
+        filmStorage.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
@@ -65,6 +65,5 @@ public class FilmController {
     public Film getFilmForId(@PathVariable int id) {
         return filmStorage.getFilmForId(id);
     }
-    */
 
 }

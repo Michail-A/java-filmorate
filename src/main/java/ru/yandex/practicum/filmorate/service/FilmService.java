@@ -20,26 +20,10 @@ public class FilmService {
         this.filmStorage = filmStorage;
     }
 
-  /*  public void addLike(int filmId, int userId) {
-        Film film = filmStorage.getFilmForId(filmId);
-        film.addLike(userId);
-        filmStorage.updateFilm(film);
-        log.info("Пользователь " + userId + " поставил лайк фильму " + filmId);
-    }
-
-    public void deleteLike(int filmId, int userId) {
-        Film film = filmStorage.getFilmForId(filmId);
-        film.deleteLike(userId);
-        filmStorage.updateFilm(film);
-        log.info("Пользователь " + userId + " удалил лайк фильму " + filmId);
-    }
-
     public List<Film> getPopularFilm(int count) {
         return filmStorage.getFilms().stream()
                 .sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size())
                 .limit(count)
                 .collect(Collectors.toList());
     }
-    /
-   */
 }

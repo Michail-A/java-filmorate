@@ -23,7 +23,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @GetMapping
     public List<User> getUsers() {
         log.info("Запрос на получение пользователей");

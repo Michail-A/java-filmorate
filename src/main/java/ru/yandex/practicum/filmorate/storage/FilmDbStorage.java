@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @Primary
@@ -70,7 +71,7 @@ public class FilmDbStorage implements FilmStorage {
                     , film.getId());
             return getFilmForId(film.getId());
         } catch (RuntimeException e) {
-            throw new ObjectNotFoundException("Пользователь id=" + film.getId() + " не найден");
+            throw new ObjectNotFoundException("Фильм id=" + film.getId() + " не найден");
         }
     }
 
@@ -91,9 +92,12 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public boolean deleteLike(int filmId, int userId) {
+    public void deleteLike(int filmId, int userId) {
         String sqlQuery = "delete from likes_films where films_id = ? and users_id = ?";
-        return jdbcTemplate.update(sqlQuery, filmId, userId) > 0;
+        boolean flag = jdbcTemplate.update(sqlQuery, filmId, userId) > 0;
+        if(!flag){
+            throw new ObjectNotFoundException("Ошибка в filmId = " + filmId + " или userId = " +userId);
+        }
     }
 
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -102,10 +106,11 @@ public class FilmDbStorage implements FilmStorage {
         String description = rs.getString("description");
         LocalDate releaseDate = rs.getDate("releaseDate").toLocalDate();
         int duration = rs.getInt("duration");
-        int ratingId = rs.getInt("rating_id");
+        int ratingId = rs.getInt("ratings_id");
         Film film = new Film(name, description, releaseDate, duration);
         film.setMpa(setMpa(ratingId));
         film.setId(id);
+        film.addLikes(setLikes(id));
         return film;
     }
 
@@ -121,6 +126,12 @@ public class FilmDbStorage implements FilmStorage {
         mpa.setName(name);
         mpa.setId(id);
         return mpa;
+    }
+
+    private List<Integer> setLikes(int filmId){
+        String sqlQuery = "select users_id from likes_films where films_id = ?";
+        List<Integer> likes = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
+        return likes;
     }
 
     private void validate(Film film) throws ValidationException {

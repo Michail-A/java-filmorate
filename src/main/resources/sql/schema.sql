@@ -47,9 +47,9 @@ CREATE TABLE IF NOT EXISTS friends (
 
 ALTER TABLE films ADD CONSTRAINT films_fk0 FOREIGN KEY (ratings_id) REFERENCES ratings(id);
 
-ALTER TABLE likes_films ADD CONSTRAINT likes_films_fk0 FOREIGN KEY (films_id) REFERENCES films(id);
+ALTER TABLE likes_films ADD CONSTRAINT likes_films_fk0 FOREIGN KEY (films_id) REFERENCES films(id) ON DELETE CASCADE;
 
-ALTER TABLE likes_films ADD CONSTRAINT likes_films_fk1 FOREIGN KEY (users_id) REFERENCES users(id);
+ALTER TABLE likes_films ADD CONSTRAINT likes_films_fk1 FOREIGN KEY (users_id) REFERENCES users(id) ON DELETE CASCADE;
 
 ALTER TABLE friends ADD CONSTRAINT friends_fk0 FOREIGN KEY (user_id) REFERENCES users(id);
 
