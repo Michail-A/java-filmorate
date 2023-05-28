@@ -12,4 +12,10 @@ public interface FilmStorage {
     Film updateFilm(Film film);
 
     Film getFilmForId(int id);
+
+    void addLike(int filmId, int userId);
+
+    boolean deleteLike(int filmId, int userId);
+
+
 }

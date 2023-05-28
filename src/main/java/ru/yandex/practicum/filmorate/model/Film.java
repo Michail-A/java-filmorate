@@ -16,16 +16,6 @@ public class Film {
     private final String description;
     private final LocalDate releaseDate;
     private final int duration;
-    private Set<Integer> likes = new HashSet<>();
-
-    public void addLike(int id) {
-        likes.add(id);
-    }
-
-    public void deleteLike(int id) {
-        if (!likes.contains(id)) {
-            throw new ObjectNotFoundException("Лайк пользователя id = " + id + " не найден");
-        }
-        likes.remove(id);
-    }
+    private Mpa mpa;
+    private Set<Genre> genres = new HashSet<>();
 }

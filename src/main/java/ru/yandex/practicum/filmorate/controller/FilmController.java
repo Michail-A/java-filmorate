@@ -43,7 +43,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping("/{id}/like/{userId}")
+   /* @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен запрос на лайк");
         filmService.addLike(id, userId);
@@ -65,4 +65,6 @@ public class FilmController {
     public Film getFilmForId(@PathVariable int id) {
         return filmStorage.getFilmForId(id);
     }
+    */
+
 }

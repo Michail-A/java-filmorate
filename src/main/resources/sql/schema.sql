@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS likes_films (
 
 CREATE TABLE IF NOT EXISTS friends (
 	user_id INTEGER NOT NULL,
-	friends_id INTEGER NOT NULL
+	friend_id INTEGER NOT NULL
 );
 
 ALTER TABLE films ADD CONSTRAINT films_fk0 FOREIGN KEY (ratings_id) REFERENCES ratings(id);
@@ -53,7 +53,7 @@ ALTER TABLE likes_films ADD CONSTRAINT likes_films_fk1 FOREIGN KEY (users_id) RE
 
 ALTER TABLE friends ADD CONSTRAINT friends_fk0 FOREIGN KEY (user_id) REFERENCES users(id);
 
-ALTER TABLE friends ADD CONSTRAINT friends_fk1 FOREIGN KEY (friends_id) REFERENCES users(id);
+ALTER TABLE friends ADD CONSTRAINT friends_fk1 FOREIGN KEY (friend_id) REFERENCES users(id);
 
 ALTER TABLE film_genres ADD CONSTRAINT film_genres_fk0 FOREIGN KEY (film_id) REFERENCES films(id);
 

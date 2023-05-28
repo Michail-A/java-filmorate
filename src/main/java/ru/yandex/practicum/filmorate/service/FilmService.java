@@ -20,7 +20,7 @@ public class FilmService {
         this.filmStorage = filmStorage;
     }
 
-    public void addLike(int filmId, int userId) {
+  /*  public void addLike(int filmId, int userId) {
         Film film = filmStorage.getFilmForId(filmId);
         film.addLike(userId);
         filmStorage.updateFilm(film);
@@ -40,4 +40,6 @@ public class FilmService {
                 .limit(count)
                 .collect(Collectors.toList());
     }
+    /
+   */
 }

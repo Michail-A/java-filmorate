@@ -77,8 +77,35 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUserForId(int id) {
-        String sql = "select * from users where id=?";
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeUser(rs, rowNum), id);
+        try{
+            String sql = "select * from users where id=?";
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeUser(rs, rowNum), id);
+        }catch (RuntimeException e){
+            throw new ObjectNotFoundException("Пользователь id=" + id + " не найден");
+        }
+    }
+
+    @Override
+    public void addFriend(int userId, int friendId) {
+        String sql = "insert into friends (user_id, friend_id) values (?, ?)";
+        try {
+            jdbcTemplate.update(sql, userId, friendId);
+        }catch (RuntimeException e){
+            throw new ObjectNotFoundException("Ошибка в id="+userId+" friendId="+friendId);
+        }
+    }
+
+    @Override
+    public void deleteFriend(int userId, int friendId) {
+        String sql = "delete from friends where user_id = ? and friend_id = ?";
+        jdbcTemplate.update(sql, userId, friendId);
+    }
+
+    @Override
+    public List<User> getFriends(int id) {
+        String sqlQuery= "select users.id, users.email, users.LOGIN , users.name,users.BIRTHDAY  from users " +
+                "inner join friends on users.id=friends.friend_id where friends.user_id = ?";
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeUser(rs, rowNum), id);
     }
 
     private User makeUser(ResultSet rs, int rowNum) throws SQLException {
@@ -92,6 +119,7 @@ public class UserDbStorage implements UserStorage {
         user.setName(name);
         return user;
     }
+
 
     private void validate(User user) throws ValidationException {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
