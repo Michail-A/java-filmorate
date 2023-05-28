@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @Primary
@@ -50,6 +51,13 @@ public class FilmDbStorage implements FilmStorage {
             stmt.setInt(5, film.getMpa().getId());
             return stmt;
         }, keyHolder);
+        String sqlGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
+        if(film.getGenres()!=null){
+            Set<Genre> genres = film.getGenres();
+            for (Genre genre : genres) {
+                jdbcTemplate.update(sqlGenre, keyHolder.getKey().intValue(), genre.getId());
+            }
+        }
         film.setId(keyHolder.getKey().intValue());
         film.setMpa(setMpa(film.getMpa().getId()));
         return film;
@@ -68,9 +76,12 @@ public class FilmDbStorage implements FilmStorage {
                     , film.getDuration()
                     , film.getMpa().getId()
                     , film.getId());
+            String sqlQueryDeleteGenres = "delete from film_genres where film_id = ?";
+            jdbcTemplate.update(sqlQueryDeleteGenres, film.getId());
             if (!film.getGenres().isEmpty()) {
                 String sqlQueryGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
-                for (Genre genre : film.getGenres()) {
+                Set<Genre> genres = film.getGenres();
+                for (Genre genre : genres) {
                     jdbcTemplate.update(sqlQueryGenre, film.getId(), genre.getId());
                 }
             }
@@ -122,7 +133,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private List<Genre> setGenre(int id) {
-        String sql = "select genre.id, genre.name from film_genres inner join genre " +
+        String sql = "select genre.id, genre.name from film_genres left join genre " +
                 "on film_genres.genre_id = genre.id " +
                 "where film_genres.film_id = ?";
         List<Genre> genres = jdbcTemplate.query(sql, (this::makeGenre), id);
