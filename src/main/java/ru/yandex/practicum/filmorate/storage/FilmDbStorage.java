@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.controller.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.controller.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -18,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 @Primary
@@ -69,7 +68,13 @@ public class FilmDbStorage implements FilmStorage {
                     , film.getDuration()
                     , film.getMpa().getId()
                     , film.getId());
-            return getFilmForId(film.getId());
+            if (!film.getGenres().isEmpty()){
+                String sqlQueryGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
+                for (Genre genre : film.getGenres()) {
+                    jdbcTemplate.update(sqlQueryGenre, film.getId(), genre.getId());
+                }
+            }
+                return getFilmForId(film.getId());
         } catch (RuntimeException e) {
             throw new ObjectNotFoundException("Фильм id=" + film.getId() + " не найден");
         }
@@ -79,7 +84,9 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilmForId(int id) {
         try {
             String sql = "select * from films where id=?";
-            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFilm(rs, rowNum), id);
+            Film film =  jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFilm(rs, rowNum), id);
+            film.addGenres(setGenre(id));
+            return film;
         } catch (RuntimeException e) {
             throw new ObjectNotFoundException("фильм id=" + id + " не найден");
         }
@@ -95,8 +102,8 @@ public class FilmDbStorage implements FilmStorage {
     public void deleteLike(int filmId, int userId) {
         String sqlQuery = "delete from likes_films where films_id = ? and users_id = ?";
         boolean flag = jdbcTemplate.update(sqlQuery, filmId, userId) > 0;
-        if(!flag){
-            throw new ObjectNotFoundException("Ошибка в filmId = " + filmId + " или userId = " +userId);
+        if (!flag){
+            throw new ObjectNotFoundException("Ошибка в id");
         }
     }
 
@@ -111,7 +118,30 @@ public class FilmDbStorage implements FilmStorage {
         film.setMpa(setMpa(ratingId));
         film.setId(id);
         film.addLikes(setLikes(id));
+        film.addGenres(setGenre(id));
         return film;
+    }
+
+    private List<Genre> setGenre(int id) {
+        String sql = "select genre.id, genre.name from film_genres inner join genre " +
+                "on film_genres.genre_id = genre.id" +
+                "where film_genres.film_id = ?";
+        List<Genre> genres = null;
+        try {
+            genres = jdbcTemplate.query(sql, ((rs, rowNum) -> makeGenre(rs, rowNum)), id);
+        } catch (RuntimeException e) {
+
+        }
+        return genres;
+    }
+
+    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+        Genre genre = new Genre();
+        genre.setId(id);
+        genre.setName(name);
+        return genre;
     }
 
     private Mpa setMpa(int ratingId) {
@@ -128,7 +158,7 @@ public class FilmDbStorage implements FilmStorage {
         return mpa;
     }
 
-    private List<Integer> setLikes(int filmId){
+    private List<Integer> setLikes(int filmId) {
         String sqlQuery = "select users_id from likes_films where films_id = ?";
         List<Integer> likes = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
         return likes;

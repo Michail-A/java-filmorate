@@ -6,6 +6,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class Genre {
     @EqualsAndHashCode.Exclude
-    private final int id;
-    private final String name;
+    private int id;
+    private String name;
 }
