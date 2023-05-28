@@ -68,13 +68,13 @@ public class FilmDbStorage implements FilmStorage {
                     , film.getDuration()
                     , film.getMpa().getId()
                     , film.getId());
-            if (!film.getGenres().isEmpty()){
+            if (!film.getGenres().isEmpty()) {
                 String sqlQueryGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
                 for (Genre genre : film.getGenres()) {
                     jdbcTemplate.update(sqlQueryGenre, film.getId(), genre.getId());
                 }
             }
-                return getFilmForId(film.getId());
+            return getFilmForId(film.getId());
         } catch (RuntimeException e) {
             throw new ObjectNotFoundException("Фильм id=" + film.getId() + " не найден");
         }
@@ -84,8 +84,7 @@ public class FilmDbStorage implements FilmStorage {
     public Film getFilmForId(int id) {
         try {
             String sql = "select * from films where id=?";
-            Film film =  jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFilm(rs, rowNum), id);
-            film.addGenres(setGenre(id));
+            Film film = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFilm(rs, rowNum), id);
             return film;
         } catch (RuntimeException e) {
             throw new ObjectNotFoundException("фильм id=" + id + " не найден");
@@ -102,7 +101,7 @@ public class FilmDbStorage implements FilmStorage {
     public void deleteLike(int filmId, int userId) {
         String sqlQuery = "delete from likes_films where films_id = ? and users_id = ?";
         boolean flag = jdbcTemplate.update(sqlQuery, filmId, userId) > 0;
-        if (!flag){
+        if (!flag) {
             throw new ObjectNotFoundException("Ошибка в id");
         }
     }
@@ -124,14 +123,9 @@ public class FilmDbStorage implements FilmStorage {
 
     private List<Genre> setGenre(int id) {
         String sql = "select genre.id, genre.name from film_genres inner join genre " +
-                "on film_genres.genre_id = genre.id" +
+                "on film_genres.genre_id = genre.id " +
                 "where film_genres.film_id = ?";
-        List<Genre> genres = null;
-        try {
-            genres = jdbcTemplate.query(sql, ((rs, rowNum) -> makeGenre(rs, rowNum)), id);
-        } catch (RuntimeException e) {
-
-        }
+        List<Genre> genres = jdbcTemplate.query(sql, (this::makeGenre), id);
         return genres;
     }
 

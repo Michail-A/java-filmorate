@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.controller.exceptions.ObjectNotFoundExcepti
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class Film {
     private final LocalDate releaseDate;
     private final int duration;
     private Mpa mpa;
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres = new LinkedHashSet<>();
     private Set<Integer> likes = new HashSet<>();
 
     public void addLikes(List<Integer> likesDb) {

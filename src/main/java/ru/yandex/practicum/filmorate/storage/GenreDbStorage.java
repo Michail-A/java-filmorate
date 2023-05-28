@@ -37,7 +37,7 @@ public class GenreDbStorage {
         }
     }
 
-    public  Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
+    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("name");
         Genre genre = new Genre();
