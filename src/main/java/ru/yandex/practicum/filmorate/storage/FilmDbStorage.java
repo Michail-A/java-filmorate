@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -76,11 +77,12 @@ public class FilmDbStorage implements FilmStorage {
                     , film.getDuration()
                     , film.getMpa().getId()
                     , film.getId());
+
             String sqlQueryDeleteGenres = "delete from film_genres where film_id = ?";
             jdbcTemplate.update(sqlQueryDeleteGenres, film.getId());
             if (!film.getGenres().isEmpty()) {
                 String sqlQueryGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
-                Set<Genre> genres = film.getGenres();
+                List<Genre> genres = new ArrayList<>(film.getGenres());
                 for (Genre genre : genres) {
                     jdbcTemplate.update(sqlQueryGenre, film.getId(), genre.getId());
                 }
@@ -136,7 +138,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "select genre.id, genre.name from film_genres left join genre " +
                 "on film_genres.genre_id = genre.id " +
                 "where film_genres.film_id = ?";
-        List<Genre> genres = jdbcTemplate.query(sql, (this::makeGenre), id);
+        List<Genre> genres = new ArrayList<>(jdbcTemplate.query(sql, (this::makeGenre), id));
         return genres;
     }
 
