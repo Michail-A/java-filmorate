@@ -18,7 +18,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Repository
 @Primary
@@ -53,7 +56,7 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
         String sqlGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
         int id = keyHolder.getKey().intValue();
-        if(!CollectionUtils.isEmpty(film.getGenres())){
+        if (!CollectionUtils.isEmpty(film.getGenres())) {
             Set<Genre> genres = new LinkedHashSet<>(film.getGenres());
             for (Genre genre : genres) {
                 jdbcTemplate.update(sqlGenre, id, genre.getId());

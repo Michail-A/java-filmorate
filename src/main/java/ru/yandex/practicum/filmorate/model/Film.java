@@ -2,17 +2,15 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ru.yandex.practicum.filmorate.controller.exceptions.ObjectNotFoundException;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode
 public class Film {
-    @EqualsAndHashCode.Exclude
     private int id;
     private final String name;
     private final String description;

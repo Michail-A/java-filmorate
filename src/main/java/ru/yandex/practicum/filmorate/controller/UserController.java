@@ -17,6 +17,7 @@ public class UserController {
 
     private final UserStorage userStorage;
     private final UserService userService;
+
     @Autowired
     public UserController(UserStorage userStorage, UserService userService) {
         this.userStorage = userStorage;
@@ -41,7 +42,7 @@ public class UserController {
         return userStorage.updateUser(user);
     }
 
-  @PutMapping("/{id}/friends/{friendId}")
+    @PutMapping("/{id}/friends/{friendId}")
     public User addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("Запрос на добавление в друзья");
         userStorage.addFriend(id, friendId);

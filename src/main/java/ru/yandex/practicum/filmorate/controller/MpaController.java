@@ -22,12 +22,12 @@ public class MpaController {
     }
 
     @GetMapping
-    public List<Mpa> getMpa(){
+    public List<Mpa> getMpa() {
         return mpaDbStorage.getMpa();
     }
 
     @GetMapping("/{id}")
-    public Mpa getMpaForId(@PathVariable int id){
+    public Mpa getMpaForId(@PathVariable int id) {
         return mpaDbStorage.getMpaForId(id);
     }
 }

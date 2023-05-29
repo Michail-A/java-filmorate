@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.controller.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.controller.exceptions.ValidationException;
@@ -16,9 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 @Primary
@@ -64,8 +61,8 @@ public class UserDbStorage implements UserStorage {
                     , user.getBirthday()
                     , user.getId());
             return getUserForId(user.getId());
-        } catch (RuntimeException e){
-            throw new ObjectNotFoundException("Пользователь id="+user.getId()+" не найден");
+        } catch (RuntimeException e) {
+            throw new ObjectNotFoundException("Пользователь id=" + user.getId() + " не найден");
         }
     }
 
@@ -77,10 +74,10 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUserForId(int id) {
-        try{
+        try {
             String sql = "select * from users where id=?";
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeUser(rs, rowNum), id);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             throw new ObjectNotFoundException("Пользователь id=" + id + " не найден");
         }
     }
@@ -90,8 +87,8 @@ public class UserDbStorage implements UserStorage {
         String sql = "insert into friends (user_id, friend_id) values (?, ?)";
         try {
             jdbcTemplate.update(sql, userId, friendId);
-        }catch (RuntimeException e){
-            throw new ObjectNotFoundException("Ошибка в id="+userId+" friendId="+friendId);
+        } catch (RuntimeException e) {
+            throw new ObjectNotFoundException("Ошибка в id=" + userId + " friendId=" + friendId);
         }
     }
 
@@ -103,7 +100,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(int id) {
-        String sqlQuery= "select users.id, users.email, users.LOGIN , users.name,users.BIRTHDAY  from users " +
+        String sqlQuery = "select users.id, users.email, users.LOGIN , users.name,users.BIRTHDAY  from users " +
                 "inner join friends on users.id=friends.friend_id where friends.user_id = ?";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeUser(rs, rowNum), id);
     }
