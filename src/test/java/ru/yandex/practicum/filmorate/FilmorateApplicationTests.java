@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -16,16 +15,11 @@ import ru.yandex.practicum.filmorate.storage.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.MpaDbStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import javax.validation.constraints.Max;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest()
 @AutoConfigureTestDatabase
@@ -159,7 +153,7 @@ class FilmorateApplicationTests {
 
     @Test
     void deleteFriend() {
-        userStorage.deleteFriend(1,2);
+        userStorage.deleteFriend(1, 2);
         assertEquals(userStorage.getFriends(1).size(), 0);
     }
 
