@@ -18,8 +18,8 @@ public class Film {
     private final String description;
     private final LocalDate releaseDate;
     private final int duration;
-    private Mpa mpa;
-    private Set<Genre> genres = new LinkedHashSet<>();
+    private final Mpa mpa;
+    private final Set<Genre> genres;
     private Set<Integer> likes = new HashSet<>();
 
     public void addLikes(List<Integer> likesDb) {

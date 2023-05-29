@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -32,15 +33,13 @@ public class FilmController {
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
         log.info("Получен запрос на добавление фильма");
-        filmStorage.addFilm(film);
-        return film;
+        return filmStorage.addFilm(film);
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
         log.info("Получен запрос на обновление фильма");
-        filmStorage.updateFilm(film);
-        return film;
+        return filmStorage.updateFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}")

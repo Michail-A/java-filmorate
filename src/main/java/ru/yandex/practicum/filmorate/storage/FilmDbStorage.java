@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import ru.yandex.practicum.filmorate.controller.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.controller.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -17,9 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @Primary
@@ -53,15 +52,18 @@ public class FilmDbStorage implements FilmStorage {
             return stmt;
         }, keyHolder);
         String sqlGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
-        if(film.getGenres()!=null){
+        int id = keyHolder.getKey().intValue();
+        if(!CollectionUtils.isEmpty(film.getGenres())){
             Set<Genre> genres = film.getGenres();
             for (Genre genre : genres) {
-                jdbcTemplate.update(sqlGenre, keyHolder.getKey().intValue(), genre.getId());
+                jdbcTemplate.update(sqlGenre, id, genre.getId());
             }
         }
-        film.setId(keyHolder.getKey().intValue());
-        film.setMpa(setMpa(film.getMpa().getId()));
-        return film;
+        Set<Genre> genres = new HashSet<>(setGenre(id));
+        Film filmUp = new Film(film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
+                setMpa(film.getMpa().getId()), genres);
+        filmUp.setId(id);
+        return filmUp;
     }
 
     @Override
@@ -77,20 +79,20 @@ public class FilmDbStorage implements FilmStorage {
                     , film.getDuration()
                     , film.getMpa().getId()
                     , film.getId());
-
             String sqlQueryDeleteGenres = "delete from film_genres where film_id = ?";
             jdbcTemplate.update(sqlQueryDeleteGenres, film.getId());
-            if (!film.getGenres().isEmpty()) {
+            if (!CollectionUtils.isEmpty(film.getGenres())) {
                 String sqlQueryGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
                 List<Genre> genres = new ArrayList<>(film.getGenres());
                 for (Genre genre : genres) {
                     jdbcTemplate.update(sqlQueryGenre, film.getId(), genre.getId());
                 }
             }
-            return getFilmForId(film.getId());
         } catch (RuntimeException e) {
             throw new ObjectNotFoundException("Фильм id=" + film.getId() + " не найден");
         }
+        Film filmUp = getFilmForId(film.getId());
+        return filmUp;
     }
 
     @Override
@@ -126,28 +128,25 @@ public class FilmDbStorage implements FilmStorage {
         LocalDate releaseDate = rs.getDate("releaseDate").toLocalDate();
         int duration = rs.getInt("duration");
         int ratingId = rs.getInt("ratings_id");
-        Film film = new Film(name, description, releaseDate, duration);
-        film.setMpa(setMpa(ratingId));
+        Set<Genre> genres = setGenre(id);
+        Film film = new Film(name, description, releaseDate, duration, setMpa(ratingId), genres);
         film.setId(id);
         film.addLikes(setLikes(id));
-        film.addGenres(setGenre(id));
         return film;
     }
 
-    private List<Genre> setGenre(int id) {
-        String sql = "select genre.id, genre.name from film_genres left join genre " +
+    private Set<Genre> setGenre(int id) {
+        String sql = "select genre.id, genre.name from film_genres inner join genre " +
                 "on film_genres.genre_id = genre.id " +
                 "where film_genres.film_id = ?";
-        List<Genre> genres = new ArrayList<>(jdbcTemplate.query(sql, (this::makeGenre), id));
+        Set<Genre> genres = new LinkedHashSet<>(jdbcTemplate.query(sql, (this::makeGenre), id));
         return genres;
     }
 
     private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("name");
-        Genre genre = new Genre();
-        genre.setId(id);
-        genre.setName(name);
+        Genre genre = new Genre(id, name);
         return genre;
     }
 

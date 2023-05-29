@@ -40,9 +40,7 @@ public class GenreDbStorage {
     private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("name");
-        Genre genre = new Genre();
-        genre.setId(id);
-        genre.setName(name);
+        Genre genre = new Genre(id, name);
         return genre;
     }
 }
