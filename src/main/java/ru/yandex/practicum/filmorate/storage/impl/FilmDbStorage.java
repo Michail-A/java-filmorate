@@ -119,8 +119,9 @@ public class FilmDbStorage implements FilmStorage {
             throw new ObjectNotFoundException("Ошибка в id");
         }
     }
+
     @Override
-    public Set<Film> getLikes(int count){
+    public Set<Film> getLikes(int count) {
         String sqlQuery = "select f.id, f.name, f.description, f.releaseDate, f.duration, f.ratings_id " +
                 "from likes_films as l right join films as f on l.films_id=f.id group by f.id " +
                 "order by count(l.users_id) DESC limit ?";
