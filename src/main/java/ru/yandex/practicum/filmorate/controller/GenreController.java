@@ -6,17 +6,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/genres")
 public class GenreController {
-    private final GenreDbStorage genreStorage;
+    private final GenreStorage genreStorage;
 
     @Autowired
-    public GenreController(GenreDbStorage genreStorage) {
+    public GenreController(GenreStorage genreStorage) {
         this.genreStorage = genreStorage;
     }
 
