@@ -171,7 +171,7 @@ public class FilmDbStorage implements FilmStorage {
         return likes;
     }
 
-    private void validate(Film film) throws ValidationException {
+    public void validate(Film film) throws ValidationException {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new ValidationException("Название не может быть пустым");
         }
