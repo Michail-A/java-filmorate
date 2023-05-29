@@ -54,12 +54,12 @@ public class FilmDbStorage implements FilmStorage {
         String sqlGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
         int id = keyHolder.getKey().intValue();
         if(!CollectionUtils.isEmpty(film.getGenres())){
-            Set<Genre> genres = film.getGenres();
+            Set<Genre> genres = new LinkedHashSet<>(film.getGenres());
             for (Genre genre : genres) {
                 jdbcTemplate.update(sqlGenre, id, genre.getId());
             }
         }
-        Set<Genre> genres = new HashSet<>(setGenre(id));
+        List<Genre> genres = new ArrayList<>(setGenre(id));
         Film filmUp = new Film(film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 setMpa(film.getMpa().getId()), genres);
         filmUp.setId(id);
@@ -83,7 +83,7 @@ public class FilmDbStorage implements FilmStorage {
             jdbcTemplate.update(sqlQueryDeleteGenres, film.getId());
             if (!CollectionUtils.isEmpty(film.getGenres())) {
                 String sqlQueryGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
-                List<Genre> genres = new ArrayList<>(film.getGenres());
+                Set<Genre> genres = new LinkedHashSet<>(film.getGenres());
                 for (Genre genre : genres) {
                     jdbcTemplate.update(sqlQueryGenre, film.getId(), genre.getId());
                 }
@@ -128,18 +128,18 @@ public class FilmDbStorage implements FilmStorage {
         LocalDate releaseDate = rs.getDate("releaseDate").toLocalDate();
         int duration = rs.getInt("duration");
         int ratingId = rs.getInt("ratings_id");
-        Set<Genre> genres = setGenre(id);
+        List<Genre> genres = new ArrayList<>(setGenre(id));
         Film film = new Film(name, description, releaseDate, duration, setMpa(ratingId), genres);
         film.setId(id);
         film.addLikes(setLikes(id));
         return film;
     }
 
-    private Set<Genre> setGenre(int id) {
+    private LinkedHashSet<Genre> setGenre(int id) {
         String sql = "select genre.id, genre.name from film_genres inner join genre " +
                 "on film_genres.genre_id = genre.id " +
-                "where film_genres.film_id = ?";
-        Set<Genre> genres = new LinkedHashSet<>(jdbcTemplate.query(sql, (this::makeGenre), id));
+                "where film_genres.film_id = ? order by film_genres.genre_id";
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>(jdbcTemplate.query(sql, (this::makeGenre), id));
         return genres;
     }
 

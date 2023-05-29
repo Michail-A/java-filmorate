@@ -45,10 +45,8 @@ class FilmorateApplicationTests {
     void beforeEach() {
         film = new Film("Test", "Test", LocalDate.of(2020, 02, 01), 60);
         film.setId(1);
-        film.setMpa(mpaStorage.getMpaForId(1));
         filmUp = new Film("TestUp", "TestUp", LocalDate.of(2020, 02, 01), 60);
         filmUp.setId(1);
-        filmUp.setMpa(mpaStorage.getMpaForId(1));
 
         user = new User("test@test.ru", "test", LocalDate.of(1900, 02, 03));
         user.setId(1);
