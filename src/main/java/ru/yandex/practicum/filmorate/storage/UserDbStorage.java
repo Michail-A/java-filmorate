@@ -54,12 +54,8 @@ public class UserDbStorage implements UserStorage {
                 "email = ?, login = ?, name = ?, birthday = ?" +
                 "where id = ?";
         try {
-            jdbcTemplate.update(sqlQuery
-                    , user.getEmail()
-                    , user.getLogin()
-                    , user.getName()
-                    , user.getBirthday()
-                    , user.getId());
+            jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getName(),
+                    user.getBirthday(), user.getId());
             return getUserForId(user.getId());
         } catch (RuntimeException e) {
             throw new ObjectNotFoundException("Пользователь id=" + user.getId() + " не найден");
