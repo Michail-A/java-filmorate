@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode
 public class Film {
     private int id;
     private final String name;
@@ -21,16 +20,6 @@ public class Film {
     private Set<Integer> likes = new HashSet<>();
 
     public void addLikes(List<Integer> likesDb) {
-        for (Integer like : likesDb) {
-            likes.add(like);
-        }
-    }
-
-    public void addGenres(List<Genre> genresDb) {
-        if (genresDb != null && !genresDb.isEmpty()) {
-            for (Genre genre : genresDb) {
-                genres.add(genre);
-            }
-        }
+        likes.addAll(likesDb);
     }
 }
