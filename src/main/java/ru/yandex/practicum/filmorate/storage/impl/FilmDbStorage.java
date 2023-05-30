@@ -53,6 +53,15 @@ public class FilmDbStorage implements FilmStorage {
                 film.addGenre(genre);
             }
         });
+
+        String likesQuery = "select * from likes_films";
+        jdbcTemplate.query(likesQuery, rs -> {
+            int filmId = rs.getInt("films_id");
+            Film film = filmById.get(filmId);
+            if (film != null) {
+               film.addLikes(rs.getInt("users_id"));
+            }
+        });
         List<Film> goodFilms= new ArrayList<>(filmById.values());
         return goodFilms;
     }

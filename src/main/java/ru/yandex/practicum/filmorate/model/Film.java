@@ -19,11 +19,11 @@ public class Film {
     private List<Genre> genres = new ArrayList<>();
     private Set<Integer> likes = new HashSet<>();
 
-    public void addLikes(List<Integer> likesDb) {
-        likes.addAll(likesDb);
+    public void addLikes(int like) {
+        likes.add(like);
     }
 
-    public void addGenre(Genre genre){
+    public void addGenre(Genre genre) {
         genres.add(genre);
     }
 }
