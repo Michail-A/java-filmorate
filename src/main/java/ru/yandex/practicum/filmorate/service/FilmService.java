@@ -20,6 +20,6 @@ public class FilmService {
     }
 
     public Set<Film> getPopularFilm(int count) {
-        return filmStorage.getLikes(count);
+        return filmStorage.getPopularFilms(count);
     }
 }

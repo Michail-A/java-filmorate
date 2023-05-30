@@ -59,12 +59,13 @@ public class FilmDbStorage implements FilmStorage {
             int filmId = rs.getInt("films_id");
             Film film = filmById.get(filmId);
             if (film != null) {
-               film.addLikes(rs.getInt("users_id"));
+                film.addLikes(rs.getInt("users_id"));
             }
         });
-        List<Film> goodFilms= new ArrayList<>(filmById.values());
+        List<Film> goodFilms = new ArrayList<>(filmById.values());
         return goodFilms;
     }
+
     @Override
     public Film addFilm(Film film) {
         validate(film);
@@ -122,14 +123,14 @@ public class FilmDbStorage implements FilmStorage {
             Film film = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFilm(rs, rowNum), id);
             String genresQuery = "select * from film_genres join genre on film_genres.genre_id=genre.id where film_genres.film_id= ?";
             jdbcTemplate.query(genresQuery, rs -> {
-                    Genre genre = new Genre(rs.getInt("id"), rs.getString("name"));
-                    film.addGenre(genre);
+                Genre genre = new Genre(rs.getInt("id"), rs.getString("name"));
+                film.addGenre(genre);
             }, id);
 
             String likesQuery = "select * from likes_films";
             jdbcTemplate.query(likesQuery, rs -> {
                 int filmId = rs.getInt("films_id");
-                    film.addLikes(rs.getInt("users_id"));
+                film.addLikes(rs.getInt("users_id"));
             });
             return film;
         } catch (RuntimeException e) {
@@ -153,7 +154,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Set<Film> getLikes(int count) {
+    public Set<Film> getPopularFilms(int count) {
         String sqlQuery = "select f.id, f.name, f.description, f.releaseDate, f.duration, f.ratings_id, ratings.name AS namempa " +
                 "from films as f inner join ratings on f.ratings_id=ratings.id " +
                 "left join LIKES_FILMS lf on lf.films_id=f.id group by f.id order by count(lf.users_id) DESC LIMIT ?";

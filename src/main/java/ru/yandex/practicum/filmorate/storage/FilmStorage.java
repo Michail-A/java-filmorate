@@ -18,5 +18,5 @@ public interface FilmStorage {
 
     void deleteLike(int filmId, int userId);
 
-    Set<Film> getLikes(int count);
+    Set<Film> getPopularFilms(int count);
 }
