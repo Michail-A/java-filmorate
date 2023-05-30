@@ -19,10 +19,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 @Primary
@@ -37,8 +36,25 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getFilms() {
-        String sqlQuery = "select * from films";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs, rowNum));
+        String sql = "select f.id, f.name, f.description, f.releaseDate, f.duration, f.ratings_id, ratings.name as " +
+                "namempa from films as f inner join ratings on f.ratings_id=ratings.id";
+        List<Film> films = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs, rowNum));
+
+        Map<Integer, Film> filmById = films.stream()
+                .collect(Collectors.toMap(Film::getId, Function.identity()));
+
+
+        String genresQuery = "select * from film_genres join genre on film_genres.genre_id=genre.id";
+        jdbcTemplate.query(genresQuery, rs -> {
+            int filmId = rs.getInt("film_id");
+            Film film = filmById.get(filmId);
+            if (film != null) {
+                Genre genre = new Genre(rs.getInt("id"), rs.getString("name"));
+                film.addGenre(genre);
+            }
+        });
+        List<Film> goodFilms= new ArrayList<>(filmById.values());
+        return goodFilms;
     }
 
     @Override
@@ -63,7 +79,7 @@ public class FilmDbStorage implements FilmStorage {
                 jdbcTemplate.update(sqlGenre, id, genre.getId());
             }
         }
-        return getFilmForId(film.getId());
+        return getFilmForId(id);
     }
 
     @Override
@@ -135,45 +151,9 @@ public class FilmDbStorage implements FilmStorage {
         int ratingId = rs.getInt("ratings_id");
         String nameMpa = rs.getString("namempa");
         Mpa mpa = new Mpa(ratingId, nameMpa);
-        Film film = new Film(name, description, releaseDate, duration, mpa, new ArrayList<>());
+        Film film = new Film(name, description, releaseDate, duration, mpa);
         film.setId(id);
-        film.addLikes(setLikes(id));
         return film;
-    }
-
-    private LinkedHashSet<Genre> setGenre(int id) {
-        String sql = "select genre.id, genre.name from film_genres inner join genre " +
-                "on film_genres.genre_id = genre.id " +
-                "where film_genres.film_id = ? order by film_genres.genre_id";
-        LinkedHashSet<Genre> genres = new LinkedHashSet<>(jdbcTemplate.query(sql, (this::makeGenre), id));
-        return genres;
-    }
-
-    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
-        int id = rs.getInt("id");
-        String name = rs.getString("name");
-        Genre genre = new Genre(id, name);
-        return genre;
-    }
-
-    private Mpa setMpa(int ratingId) {
-        String sql = "select * from ratings where id=?";
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeMpa(rs, rowNum), ratingId);
-    }
-
-    private Mpa makeMpa(ResultSet rs, int rowNum) throws SQLException {
-        int id = rs.getInt("id");
-        String name = rs.getString("name");
-        Mpa mpa = new Mpa();
-        mpa.setName(name);
-        mpa.setId(id);
-        return mpa;
-    }
-
-    private List<Integer> setLikes(int filmId) {
-        String sqlQuery = "select users_id from likes_films where films_id = ?";
-        List<Integer> likes = jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId);
-        return likes;
     }
 
     public void validate(Film film) throws ValidationException {

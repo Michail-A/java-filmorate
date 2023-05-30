@@ -42,9 +42,9 @@ class FilmorateApplicationTests {
     void beforeEach() {
         mpa = mpaStorage.getMpaForId(1);
         film = new Film("Test", "Test", LocalDate.of(2020, 02, 01),
-                60, mpa, new ArrayList<>());
+                60, mpa);
         filmUp = new Film("TestUp", "TestUp", LocalDate.of(2020, 02, 01),
-                60, mpa, new ArrayList<>());
+                60, mpa);
         user = new User("test@test.ru", "testlog", LocalDate.of(1900, 02, 03));
         user.setName("Tester");
         userUp = new User("supertest@test.ru", "testlogup", LocalDate.of(1900, 02, 03));
