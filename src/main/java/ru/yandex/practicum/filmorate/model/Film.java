@@ -1,31 +1,29 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import ru.yandex.practicum.filmorate.controller.exceptions.ObjectNotFoundException;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
 public class Film {
-    @EqualsAndHashCode.Exclude
     private int id;
     private final String name;
     private final String description;
     private final LocalDate releaseDate;
     private final int duration;
-    private Set<Integer> likes = new HashSet<>();
+    private final Mpa mpa;
+    private List<Genre> genres;
+    private Set<Integer> likes;
 
-    public void addLike(int id) {
-        likes.add(id);
+    public void addLikes(int like) {
+        likes.add(like);
     }
 
-    public void deleteLike(int id) {
-        if (!likes.contains(id)) {
-            throw new ObjectNotFoundException("Лайк пользователя id = " + id + " не найден");
-        }
-        likes.remove(id);
+    public void addGenre(Genre genre) {
+        genres.add(genre);
     }
 }

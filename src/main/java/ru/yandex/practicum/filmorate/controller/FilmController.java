@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "/films")
@@ -32,31 +33,29 @@ public class FilmController {
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
         log.info("Получен запрос на добавление фильма");
-        filmStorage.addFilm(film);
-        return film;
+        return filmStorage.addFilm(film);
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
         log.info("Получен запрос на обновление фильма");
-        filmStorage.updateFilm(film);
-        return film;
+        return filmStorage.updateFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен запрос на лайк");
-        filmService.addLike(id, userId);
+        filmStorage.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен запрос на дизлайк");
-        filmService.deleteLike(id, userId);
+        filmStorage.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public Set<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         log.info("Запрос на получение списка популярных фильмов");
         return filmService.getPopularFilm(count);
     }
@@ -65,4 +64,5 @@ public class FilmController {
     public Film getFilmForId(@PathVariable int id) {
         return filmStorage.getFilmForId(id);
     }
+
 }
