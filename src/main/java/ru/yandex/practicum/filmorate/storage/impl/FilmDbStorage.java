@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -108,7 +109,7 @@ public class FilmDbStorage implements FilmStorage {
                     jdbcTemplate.update(sqlQueryGenre, film.getId(), genre.getId());
                 }
             }
-        } catch (RuntimeException e) {
+        } catch (EmptyResultDataAccessException e) {
             throw new ObjectNotFoundException("Фильм id=" + film.getId() + " не найден");
         }
         Film filmUp = getFilmForId(film.getId());
@@ -133,7 +134,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.addLikes(rs.getInt("users_id"));
             });
             return film;
-        } catch (RuntimeException e) {
+        } catch (EmptyResultDataAccessException e) {
             throw new ObjectNotFoundException("фильм id=" + id + " не найден");
         }
     }
