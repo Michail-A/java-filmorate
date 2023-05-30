@@ -65,7 +65,6 @@ public class FilmDbStorage implements FilmStorage {
         List<Film> goodFilms= new ArrayList<>(filmById.values());
         return goodFilms;
     }
-
     @Override
     public Film addFilm(Film film) {
         validate(film);
@@ -121,6 +120,17 @@ public class FilmDbStorage implements FilmStorage {
             String sql = "select f.id, f.name, f.description, f.releaseDate, f.duration, f.ratings_id, ratings.name as " +
                     "namempa from films as f inner join ratings on f.ratings_id=ratings.id where f.id=?";
             Film film = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFilm(rs, rowNum), id);
+            String genresQuery = "select * from film_genres join genre on film_genres.genre_id=genre.id";
+            jdbcTemplate.query(genresQuery, rs -> {
+                    Genre genre = new Genre(rs.getInt("id"), rs.getString("name"));
+                    film.addGenre(genre);
+            });
+
+            String likesQuery = "select * from likes_films";
+            jdbcTemplate.query(likesQuery, rs -> {
+                int filmId = rs.getInt("films_id");
+                    film.addLikes(rs.getInt("users_id"));
+            });
             return film;
         } catch (RuntimeException e) {
             throw new ObjectNotFoundException("фильм id=" + id + " не найден");
