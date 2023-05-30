@@ -120,11 +120,11 @@ public class FilmDbStorage implements FilmStorage {
             String sql = "select f.id, f.name, f.description, f.releaseDate, f.duration, f.ratings_id, ratings.name as " +
                     "namempa from films as f inner join ratings on f.ratings_id=ratings.id where f.id=?";
             Film film = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFilm(rs, rowNum), id);
-            String genresQuery = "select * from film_genres join genre on film_genres.genre_id=genre.id";
+            String genresQuery = "select * from film_genres join genre on film_genres.genre_id=genre.id where film_genres.film_id= ?";
             jdbcTemplate.query(genresQuery, rs -> {
                     Genre genre = new Genre(rs.getInt("id"), rs.getString("name"));
                     film.addGenre(genre);
-            });
+            }, id);
 
             String likesQuery = "select * from likes_films";
             jdbcTemplate.query(likesQuery, rs -> {
@@ -154,9 +154,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Set<Film> getLikes(int count) {
-        String sqlQuery = "select f.id, f.name, f.description, f.releaseDate, f.duration, f.ratings_id " +
-                "from likes_films as l right join films as f on l.films_id=f.id group by f.id " +
-                "order by count(l.users_id) DESC limit ?";
+        String sqlQuery = "select f.id, f.name, f.description, f.releaseDate, f.duration, f.ratings_id, ratings.name AS namempa " +
+                "from films as f inner join ratings on f.ratings_id=ratings.id " +
+                "left join LIKES_FILMS lf on lf.films_id=f.id group by f.id order by count(lf.users_id) DESC LIMIT ?";
         Set<Film> popularFilm = new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs, rowNum), count));
         return popularFilm;
     }
@@ -170,8 +170,7 @@ public class FilmDbStorage implements FilmStorage {
         int ratingId = rs.getInt("ratings_id");
         String nameMpa = rs.getString("namempa");
         Mpa mpa = new Mpa(ratingId, nameMpa);
-        Film film = new Film(name, description, releaseDate, duration, mpa);
-        film.setId(id);
+        Film film = new Film(id, name, description, releaseDate, duration, mpa, new ArrayList<>(), new HashSet<>());
         return film;
     }
 
