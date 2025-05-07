@@ -1,11 +1,15 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/films")
@@ -37,7 +41,7 @@ public class FilmController {
             return film;
         } else {
             log.warn("Фильма с id={} не существует", film.getId());
-            throw new NoSuchElementException("Фильма с id=" + film.getId() + " не существует");
+            throw new ValidationException("Фильма с id=" + film.getId() + " не существует");
         }
     }
 
