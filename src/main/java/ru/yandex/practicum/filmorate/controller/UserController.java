@@ -1,56 +1,70 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
 
-    private int id = 1;
+    private final UserService userService;
 
-    private final Map<Integer, User> storage = new HashMap<>();
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
         log.info("Получен запрос на добавление пользователя {}", user);
-        user.setId(id);
-        if (user.getName() == null) {
-            log.info("У пользователя не указанно имя, в качестве имени присвоен логин = {}", user.getLogin());
-            user.setName(user.getLogin());
-        }
-        storage.put(id, user);
-        id++;
-        log.info("Добавлен пользователь {}", user);
-        return user;
+        return userService.add(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
         log.info("Получен запрос на обновление пользователя {}", user);
-        if (storage.containsKey(user.getId())) {
-            log.info("Пользователь id = {} существует", user.getId());
-            storage.put(user.getId(), user);
-            log.info("Обновлен пользователь {}", user);
-            return user;
-        } else {
-            log.warn("Пользователя с id = {} не существует", user.getId());
-            throw new ValidationException("Пользователя с id=" + user.getId() + " не существует");
-        }
+        return userService.update(user);
     }
 
     @GetMapping
-    public List<User> getFilms() {
+    public List<User> getUsers() {
         log.info("Получен запрос на получение списка всех пользователей");
-        return new ArrayList<>(storage.values());
+        return userService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable int id) {
+        log.info("Получен запрос на получение пользователя id={}", id);
+        return userService.get(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+        log.info("Получен запрос на добавление в друзья userId={}, friendId= {}", id, friendId);
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+        log.info("Получен запрос на удаление из друзей userId={}, friendId= {}", id, friendId);
+        userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable int id) {
+        log.info("Получен запрос на получение списка друзей userID={}", id);
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{userId}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable int userId, @PathVariable int otherId) {
+        log.info("Получен запрос на получение списка общих друзей userId={} c otherId={}", userId, otherId);
+        return userService.getCommonFriends(userId, otherId);
     }
 }
