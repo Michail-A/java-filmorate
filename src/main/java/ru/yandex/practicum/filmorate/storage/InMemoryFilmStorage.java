@@ -2,13 +2,9 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -19,23 +15,23 @@ public class InMemoryFilmStorage implements FilmStorage {
     private int id = 1;
 
     @Override
-    public Film add(Film film) {
+    public Optional<Film> add(Film film) {
         film.setId(id);
         storage.put(id, film);
         id++;
         log.info("Добавлен фильм:{}", film);
-        return film;
+        return Optional.of(storage.get(film.getId()));
     }
 
     @Override
-    public Film update(Film film) {
+    public Optional<Film> update(Film film) {
         if (!storage.containsKey(film.getId())) {
             log.warn("Фильма с id={} не существует", film.getId());
-            throw new NotFoundException("Фильма с id=" + film.getId() + " не существует");
+            return Optional.empty();
         }
         storage.put(film.getId(), film);
         log.info("Обновлен фильм:{}", film);
-        return film;
+        return Optional.of(storage.get(film.getId()));
     }
 
     @Override
@@ -44,11 +40,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film get(int id) {
-        if (!storage.containsKey(id)) {
-            log.warn("Фильма с id={} не существует", id);
-            throw new NotFoundException(String.format("Фильма id=%s не существует", id));
-        }
-        return storage.get(id);
+    public Optional<Film> get(int id) {
+        return Optional.ofNullable(storage.get(id));
     }
 }
