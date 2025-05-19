@@ -1,22 +1,62 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface FilmService {
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class FilmService {
 
-    Film add(Film film);
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
-    Film update(Film film);
 
-    Film get(int id);
+    public Film add(Film film) {
 
-    List<Film> getAll();
+        return filmStorage.add(film).orElseThrow();
+    }
 
-    void addLike(int id, int userId);
+    public Film update(Film film) {
+        return filmStorage.update(film).orElseThrow(()
+                -> new NotFoundException("Фильма с id=" + film.getId() + " не существует"));
+    }
 
-    void deleteLike(int id, int userId);
+    public Film get(int id) {
+        return filmStorage.get(id).orElseThrow(()
+                -> new NotFoundException("Фильма с id=" + id + " не существует"));
+    }
 
-    List<Film> getPopularFilms(int count);
+    public List<Film> getAll() {
+        return filmStorage.getAll();
+    }
+
+    public void addLike(int id, int userId) {
+        userStorage.get(userId).orElseThrow(()
+                -> new NotFoundException("Пользователя с id=" + userId + " не существует"));
+        filmStorage.get(id).orElseThrow(()
+                -> new NotFoundException("Фильма с id=" + id + " не существует"));
+        filmStorage.addLike(id, userId);
+    }
+
+    public void deleteLike(int id, int userId) {
+        userStorage.get(userId).orElseThrow(()
+                -> new NotFoundException("Пользователя с id=" + userId + " не существует"));
+        filmStorage.get(id).orElseThrow(()
+                -> new NotFoundException("Фильма с id=" + id + " не существует"));
+        filmStorage.deleteLike(id, userId);
+    }
+
+    public List<Film> getPopularFilms(int count) {
+        return new ArrayList<>(filmStorage.getPopularFilms(count));
+    }
+
 }
