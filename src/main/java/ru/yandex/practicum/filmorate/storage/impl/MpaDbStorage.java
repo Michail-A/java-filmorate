@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,12 +25,12 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public Mpa get(int id) {
+    public Optional<Mpa> get(int id) {
         try {
             String sql = "select * from ratings where id = ?";
-            return jdbcTemplate.queryForObject(sql, this::makeMpa, id);
+            return Optional.of(jdbcTemplate.queryForObject(sql, this::makeMpa, id));
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("Рейтинга с id=" + id + " нет");
+            return Optional.empty();
         }
     }
 

@@ -45,9 +45,13 @@ public class FilmDbStorage implements FilmStorage {
         int id = keyHolder.getKey().intValue();
         if (!CollectionUtils.isEmpty(film.getGenres())) {
             Set<Genre> genres = new LinkedHashSet<>(film.getGenres());
-            for (Genre genre : genres) {
-                jdbcTemplate.update(sqlGenre, id, genre.getId());
-            }
+            jdbcTemplate.batchUpdate(sqlGenre,
+                    genres,
+                    100,
+                    (PreparedStatement ps, Genre genre) -> {
+                        ps.setInt(1, id);
+                        ps.setInt(2, genre.getId());
+                    });
         }
         return get(id);
     }
@@ -62,11 +66,15 @@ public class FilmDbStorage implements FilmStorage {
             String sqlQueryDeleteGenres = "delete from film_genres where film_id = ?";
             jdbcTemplate.update(sqlQueryDeleteGenres, film.getId());
             if (!CollectionUtils.isEmpty(film.getGenres())) {
-                String sqlQueryGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
+                String sqlGenre = "insert into film_genres(film_id, genre_id) values(?, ?)";
                 Set<Genre> genres = new LinkedHashSet<>(film.getGenres());
-                for (Genre genre : genres) {
-                    jdbcTemplate.update(sqlQueryGenre, film.getId(), genre.getId());
-                }
+                jdbcTemplate.batchUpdate(sqlGenre,
+                        genres,
+                        100,
+                        (PreparedStatement ps, Genre genre) -> {
+                            ps.setInt(1, film.getId());
+                            ps.setInt(2, genre.getId());
+                        });
             }
             return get(film.getId());
         } catch (EmptyResultDataAccessException e) {

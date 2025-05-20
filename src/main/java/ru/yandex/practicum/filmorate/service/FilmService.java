@@ -5,7 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
@@ -18,6 +22,8 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final MpaStorage mpaStorage;
+    private final GenreStorage genreStorage;
 
 
     public Film add(Film film) {
@@ -57,6 +63,22 @@ public class FilmService {
 
     public List<Film> getPopularFilms(int count) {
         return new ArrayList<>(filmStorage.getPopularFilms(count));
+    }
+
+    public Mpa getMpa(int id) {
+        return mpaStorage.get(id).orElseThrow(() -> new NotFoundException("Рейтинг id=" + id + "не найден"));
+    }
+
+    public Genre getGenre(int id) {
+        return genreStorage.get(id).orElseThrow(() -> new NotFoundException("Жанр id=" + id + "не найден"));
+    }
+
+    public List<Mpa> getMpaAll() {
+        return new ArrayList<>(mpaStorage.getAll());
+    }
+
+    public List<Genre> getGenreAll() {
+        return new ArrayList<>(genreStorage.getAll());
     }
 
 }

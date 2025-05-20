@@ -71,12 +71,7 @@ public class UserService {
         userStorage.get(otherId).orElseThrow(()
                 -> new NotFoundException("Пользователя с id=" + otherId + " не существует"));
 
-        List<User> userFriends = userStorage.getFriends(userId);
-        List<User> otherFriends = userStorage.getFriends(otherId);
-
-        return userFriends.stream()
-                .filter(otherFriends::contains)
-                .collect(Collectors.toList());
+        return userStorage.getCommonFriends(userId, otherId);
     }
 
 }

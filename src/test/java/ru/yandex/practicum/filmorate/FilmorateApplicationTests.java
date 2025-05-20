@@ -42,17 +42,13 @@ class FilmorateApplicationTests {
 
     @BeforeEach
     void beforeEach() {
-        mpa = mpaStorage.get(1);
+        mpa = mpaStorage.get(1).get();
         film = new Film(1, "Test", "Test", LocalDate.of(2020, 02, 01),
                 60, new HashSet<>(), new ArrayList<>(), mpa);
         filmUp = new Film(1, "SuperTest", "Test", LocalDate.of(2020, 02, 01),
                 60, new HashSet<>(), new ArrayList<>(), mpa);
         user = new User("test@test.ru", "testlog", LocalDate.of(1900, 02, 03));
         userUp = new User("supertest@test.ru", "testlogup", LocalDate.of(1900, 02, 03));
-        userStorage.add(user);
-        userStorage.add(userUp);
-        user = userStorage.getAll().get(0);
-        userUp = userStorage.getAll().get(1);
     }
 
     @Test
@@ -62,8 +58,8 @@ class FilmorateApplicationTests {
 
     @Test
     public void testGetGenreById() {
-        assertEquals(genreStorage.get(1).getName(), "Комедия");
-        assertEquals(genreStorage.get(2).getName(), "Драма");
+        assertEquals(genreStorage.get(1).get().getName(), "Комедия");
+        assertEquals(genreStorage.get(2).get().getName(), "Драма");
     }
 
     @Test
@@ -73,15 +69,17 @@ class FilmorateApplicationTests {
 
     @Test
     void testGetMpaById() {
-        assertEquals(mpaStorage.get(1).getName(), "G");
-        assertEquals(mpaStorage.get(2).getName(), "PG");
+        assertEquals(mpaStorage.get(1).get().getName(), "G");
+        assertEquals(mpaStorage.get(2).get().getName(), "PG");
     }
 
     @Test
     void getFilms() {
         filmStorage.add(film);
         filmStorage.add(filmUp);
+
         List<Film> films = filmStorage.getAll();
+
         assertEquals(films.size(), 2);
     }
 
@@ -89,6 +87,7 @@ class FilmorateApplicationTests {
     void addFilm() {
         Film filmAdded = filmStorage.add(film).get();
         film.setId(1);
+
         assertEquals(filmAdded, film);
     }
 
@@ -96,6 +95,7 @@ class FilmorateApplicationTests {
     void updateFilm() {
         filmUp.setId(1);
         filmStorage.add(film);
+
         assertEquals(filmStorage.update(filmUp).get(), filmUp);
     }
 
@@ -109,15 +109,22 @@ class FilmorateApplicationTests {
     @Test
     void addLike() {
         filmStorage.add(film);
+        userStorage.add(user);
+
         filmStorage.addLike(1, 1);
+
         assertEquals(filmStorage.get(1).get().getLikes().size(), 1);
     }
 
     @Test
     void deleteLike() {
         filmStorage.add(film);
+        userStorage.add(user);
+
         filmStorage.addLike(1, 1);
+
         assertEquals(filmStorage.get(1).get().getLikes().size(), 1);
+
         filmStorage.deleteLike(1, 1);
         assertEquals(filmStorage.get(1).get().getLikes().size(), 0);
     }
@@ -125,44 +132,67 @@ class FilmorateApplicationTests {
     @Test
     void addUser() {
         User userAdded = userStorage.add(user).get();
-        user.setId(3);
+
+        user.setId(1);
         assertEquals(userAdded, user);
     }
 
     @Test
     void updateUser() {
-        userUp.setId(1);
         userStorage.add(user);
-        assertEquals(userStorage.update(userUp).get(), userUp);
+        userUp.setId(1);
+
+        User updatedUser = userStorage.update(userUp).get();
+
+        assertEquals(updatedUser, userUp);
 
     }
 
     @Test
     void getUsers() {
+        userStorage.add(user);
+        userStorage.add(userUp);
+
         assertEquals(userStorage.getAll().size(), 2);
     }
 
     @Test
     void getUserForId() {
+        userStorage.add(user);
+        user.setId(1);
+
         assertEquals(userStorage.get(1).get(), user);
     }
 
     @Test
     void addFriend() {
+        userStorage.add(user);
+        userStorage.add(userUp);
+
         userStorage.addFriend(1, 2);
+
         assertEquals(userStorage.getFriends(1).size(), 1);
     }
 
     @Test
     void deleteFriend() {
+        userStorage.add(user);
+        userStorage.add(userUp);
+        userStorage.addFriend(1, 2);
+
         userStorage.deleteFriend(1, 2);
+
         assertEquals(userStorage.getFriends(1).size(), 0);
     }
 
     @Test
     void getFriends() {
+        userStorage.add(user);
+        userStorage.add(userUp);
+
         userStorage.addFriend(1, 2);
         List<User> friends = userStorage.getFriends(1);
+
         User friend = friends.get(0);
         assertEquals(friend, userStorage.get(2).get());
     }

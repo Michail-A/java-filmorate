@@ -87,9 +87,17 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(int id) {
-        String sqlQuery = "select users.id, users.email, users.LOGIN , users.name,users.BIRTHDAY  from users " +
+        String sqlQuery = "select users.id, users.email, users.LOGIN, users.name, users.BIRTHDAY from users " +
                 "inner join friends on users.id=friends.friend_id where friends.user_id = ?";
         return jdbcTemplate.query(sqlQuery, this::makeUser, id);
+    }
+
+    @Override
+    public List<User> getCommonFriends(int userId, int otherId) {
+        String sqlQuery = "select u.id, u.email, u.LOGIN, u.name, u.BIRTHDAY from friends t1" +
+                " join friends t2 on t1.friend_id = t2.friend_id join users u on u.id=t1.friend_id" +
+                " where t1.user_id = ? and t2.user_id = ?";
+        return jdbcTemplate.query(sqlQuery, this::makeUser, userId, otherId);
     }
 
     private User makeUser(ResultSet rs, int rowNum) throws SQLException {

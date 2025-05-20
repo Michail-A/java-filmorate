@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.MpaStorage;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.List;
 
@@ -17,17 +17,17 @@ import java.util.List;
 @Slf4j
 public class MpaController {
 
-    private final MpaStorage mpaStorage;
+    private final FilmService filmService;
 
     @GetMapping
     public List<Mpa> getAll() {
         log.info("Получен запрос на получение списка рейтингов");
-        return mpaStorage.getAll();
+        return filmService.getMpaAll();
     }
 
     @GetMapping("/{id}")
     public Mpa get(@PathVariable int id) {
         log.info("Получен запрос на получение рейтинга id= {}", id);
-        return mpaStorage.get(id);
+        return filmService.getMpa(id);
     }
 }
